@@ -33,7 +33,10 @@ class LeafNode(HTMLNode):
             return self.value
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
-# TODO: PARENT NODE
+    def __repr__(self):
+        str = f"LeafNode({self.tag}, {self.value}, {self.props})"
+        return str
+
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
@@ -43,9 +46,11 @@ class ParentNode(HTMLNode):
             raise ValueError("There is no tag.")
         if self.children == None:
             raise ValueError("There is no children")
-        # TODO: return string of html with children - use recursion
-        # <p><b>bold text</b>Normal text<i>italic</i>Normal text</p>
         child_html = ""
         for leafnode in self.children:
             child_html += leafnode.to_html()
         return f"<{self.tag}{self.props_to_html()}>{child_html}</{self.tag}>"
+
+    def __repr__(self):
+        str = f"ParentNode({self.tag}, {self.children}, {self.props})"
+        return str
