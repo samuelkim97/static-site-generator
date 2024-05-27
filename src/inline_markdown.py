@@ -1,4 +1,5 @@
 import re
+import pprint
 
 from textnode import (
     text_type_text,
@@ -48,6 +49,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     result.append(TextNode(part, text_type))
                 else:
                     result.append(TextNode(part, text_type_text))
+        if len(after_split_list) == 1:
+            result.append(old_node)
 
     return result
 
@@ -63,15 +66,18 @@ def split_nodes_image(old_nodes):
     for old_node in old_nodes:
         # TextNode()
         splitted_list = re.split(r"(!\[.*?]\(.*?\))", old_node.text)
-        for splitted in splitted_list:
-            if image_regex.search(splitted):
-                type_of_image, url = image_regex.findall(splitted)[0]
-                url = url.replace(")", "")
-                result.append(TextNode(type_of_image, text_type_image, url))
-            elif splitted == "":
-                continue
-            else:
-                result.append(TextNode(splitted, text_type_text))
+        if len(splitted_list) == 1:
+            result.append(old_node)
+        else:
+            for splitted in splitted_list:
+                if image_regex.search(splitted):
+                    type_of_image, url = image_regex.findall(splitted)[0]
+                    url = url.replace(")", "")
+                    result.append(TextNode(type_of_image, text_type_image, url))
+                elif splitted == "":
+                    continue
+                else:
+                    result.append(TextNode(splitted, text_type_text))
 
     return result
 
@@ -80,20 +86,34 @@ def split_nodes_link(old_nodes):
     for old_node in old_nodes:
         # TextNode()
         splitted_list = re.split(r"(\[.*?]\(.*?\))", old_node.text)
-        for splitted in splitted_list:
-            if link_regex.search(splitted):
-                type_of_link, url = image_regex.findall(splitted)[0]
-                url = url.replace(")", "")
-                result.append(TextNode(type_of_link, text_type_link, url))
-            elif splitted == "":
-                continue
-            else:
-                result.append(TextNode(splitted, text_type_text))
+        if len(splitted_list) == 1:
+            result.append(old_node)
+        else:
+            for splitted in splitted_list:
+                if link_regex.search(splitted):
+                    type_of_link, url = link_regex.findall(splitted)[0]
+                    url = url.replace(")", "")
+                    result.append(TextNode(type_of_link, text_type_link, url))
+                elif splitted == "":
+                    continue
+                else:
+                    result.append(TextNode(splitted, text_type_text))
 
     return result
 
+# LAST PART RETURNS TEXT TO BUNCH OF TEXTNODES
+def text_to_textnodes(text):
+    text_node = TextNode(text, text_type_text)
+    a = split_nodes_image([text_node])
+    b = split_nodes_link(a)
+    c = split_nodes_delimiter(b, "`", text_type_code)
+    d = split_nodes_delimiter(c, "**", text_type_bold)
+    e = split_nodes_delimiter(d, "*", text_type_italic)
+    pprint.pp(e)
+    return e
+    
 
-
+#text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)")
 
 
 #node = TextNode(
