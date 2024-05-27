@@ -1,11 +1,17 @@
 import re
+
 from textnode import (
     text_type_text,
     text_type_code,
     text_type_bold,
     text_type_italic,
-    TextNode
+    text_type_link,
+    text_type_image,
+    TextNode,
 )
+
+image_regex = re.compile(r"!\[(.*?)]\((.*?\))")
+link_regex = re.compile(r"\[(.*?)]\((.*?\))")
 
 def find_match_text(string, re_type):
     code_re = re.compile(r"`.+`")
@@ -44,9 +50,61 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     result.append(TextNode(part, text_type_text))
 
     return result
+
+# image and link to list
+def extract_markdown_images(text):
+    return image_regex.findall(text)
+
+def extract_markdown_links(text):
+    return link_regex.findall(text)
+
+def split_nodes_image(old_nodes):
+    result = []
+    for old_node in old_nodes:
+        # TextNode()
+        splitted_list = re.split(r"(!\[.*?]\(.*?\))", old_node.text)
+        for splitted in splitted_list:
+            if image_regex.search(splitted):
+                type_of_image, url = image_regex.findall(splitted)[0]
+                url = url.replace(")", "")
+                result.append(TextNode(type_of_image, text_type_image, url))
+            elif splitted == "":
+                continue
+            else:
+                result.append(TextNode(splitted, text_type_text))
+
+    return result
+
+def split_nodes_link(old_nodes):
+    result = []
+    for old_node in old_nodes:
+        # TextNode()
+        splitted_list = re.split(r"(\[.*?]\(.*?\))", old_node.text)
+        for splitted in splitted_list:
+            if link_regex.search(splitted):
+                type_of_link, url = image_regex.findall(splitted)[0]
+                url = url.replace(")", "")
+                result.append(TextNode(type_of_link, text_type_link, url))
+            elif splitted == "":
+                continue
+            else:
+                result.append(TextNode(splitted, text_type_text))
+
+    return result
+
+
+
+
+
+#node = TextNode(
+#    "This is text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
+#    text_type_text,
+#)
+#new_nodes = split_nodes_image([node])
+#print(new_nodes)
 # print(find_match_text("This is **bold** text.", text_type_bold))
 # print(find_match_text("this is *italic text* yes!.", text_type_italic))
-# print(split_nodes_delimiter([TextNode("This is text with a `code block` word", text_type_text)], "`", text_type_code))
-# print(split_nodes_delimiter([TextNode("This is text with a **bold block** word", text_type_text)], "**", text_type_bold))
-# print(split_nodes_delimiter([TextNode("This is text with a *italic block* word", text_type_text)], "*", text_type_italic))
+#print(split_nodes_delimiter([TextNode("This is text with a `code block` word", text_type_text)], "`", text_type_code))
+#print(split_nodes_delimiter([TextNode("This is text with a **bold block** word", text_type_text)], "**", text_type_bold))
+#print(split_nodes_delimiter([TextNode("This is text with a *italic block* word", text_type_text)], "*", text_type_italic))
 
