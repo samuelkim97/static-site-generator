@@ -114,20 +114,3 @@ def text_to_textnodes(text):
     d = split_nodes_delimiter(c, "**", text_type_bold)
     e = split_nodes_delimiter(d, "*", text_type_italic)
     return e
-    
-
-#final = text_to_textnodes("1. An elaborate pantheon of deities (the `Valar` and `Maiar`)\n2. The tragic saga of the Noldor Elves\n3. The rise and fall of great kingdoms such as Gondolin and Númenor")
-
-#print(final)
-#node = TextNode(
-#    "This is\n text with an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and another ![second image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/3elNhQu.png)",
-#    text_type_text,
-#)
-#new_nodes = split_nodes_image([node])
-#print(new_nodes)
-# print(find_match_text("This is **bold** text.", text_type_bold))
-# print(find_match_text("this is *italic text* yes!.", text_type_italic))
-#print(split_nodes_delimiter([TextNode("This is text with a `code block` word", text_type_text)], "`", text_type_code))
-#print(split_nodes_delimiter([TextNode("This is text with a **bold block** word", text_type_text)], "**", text_type_bold))
-#print(split_nodes_delimiter([TextNode("This is text with a *italic block* word", text_type_text)], "*", text_type_italic))
-

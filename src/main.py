@@ -1,9 +1,10 @@
+from os.path import isfile
 import os, shutil
 from textnode import TextNode
 from block_markdown import markdown_to_html_node, extract_title
 
 def main():
-    generate_page("/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/content/index.md", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/template.html", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/public/")
+    generate_pages_recursive("/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/content/", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/template.html", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/public/")
 
 def copy_dir_to_dir(directory, dst):
     # if given dir exists.
@@ -24,7 +25,6 @@ def copy_dir_to_dir(directory, dst):
 
 
 
-# TODO: HERE
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from \"{from_path}\" to \"{dest_path}\" using \"{template_path}\"")
     # open file
@@ -53,8 +53,20 @@ def generate_page(from_path, template_path, dest_path):
     with open(new_file_path, "w") as new_file:
         new_file.write(template_text)
 
-main()
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    entry_list = os.listdir(dir_path_content)
+    for entry in entry_list:
+        entry_path = os.path.join(dir_path_content, entry)
+        if os.path.isfile(entry_path):
+            generate_page(entry_path, template_path, dest_dir_path)
+        else:
+            new_dest_path = os.path.join(dest_dir_path, entry)
+            if os.path.exists(new_dest_path) == False:
+                os.makedirs(new_dest_path)
+            generate_pages_recursive(entry_path, template_path, new_dest_path + "/")
 
-# TEST
-#copy_dir_to_dir("/home/bumsookim/Test/", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/public/")
-#generate_page("/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/content/index.md", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/template.html", "/home/bumsookim/workspace/github.com/samuelkim97/static-site-generator/public/")
+
+
+
+
+main()

@@ -146,30 +146,3 @@ def extract_title(markdown):
 
 
     raise Exception("All pages need a single h1 header.")
-        #for parent_node in block:
-            #print(parent_node)
-    #raise Exception("All pages need a h1 header.")
-
-# TEST
-#markdown1 = """# This is heading
-## and 2
-
-#* this is unordered list.
-#- this too
-
-#`print("This is code")
-#x = 2 + 2
-#print(x)`
-
-#Last, this is with **bold text** and *italic*
-#and of course ![image](~/home/picture/pic.jpg)
-#[link](https://www.google.com) link too!
-#"""
-#print(extract_title(markdown1))
-#print(markdown_to_html_node(markdown1).children)
-#print(block_to_html_node("# This is heading.\n###### and also new line."))
-#print(block_to_html_node("```This is code.\n with many\nline\nhahaha.```"))
-# split_nodes_delimiter INVALID SYNTAX ERROR INLINE..py
-#print(block_to_html_node("* This is first item with `code block` inside\n* second item!\n- third item\n- last item.```"))
-#print(block_to_html_node("1. This is code.\n2. with many\n3. line\n4. hahaha.```"))
-#print(block_to_html_node("This is code.\nwith many\nline\n4. hahaha.```"))
