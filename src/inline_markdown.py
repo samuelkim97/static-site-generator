@@ -15,7 +15,7 @@ image_regex = re.compile(r"!\[(.*?)]\((.*?\))")
 link_regex = re.compile(r"\[(.*?)]\((.*?\))")
 
 def find_match_text(string, re_type):
-    code_re = re.compile(r"`.+`")
+    code_re = re.compile(r"`{3}.+`{3}")
     bold_re = re.compile(r"\*{2}.+\*{2}")
     italic_re = re.compile(r"\*{1}.+\*{1}")
 
@@ -39,23 +39,24 @@ def find_match_text(string, re_type):
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     result = []
     for old_node in old_nodes:
-        after_split_list = old_node.text.split(delimiter)
-        num_of_delimiter = old_node.text.count(delimiter)
-        if old_node.text == "":
-            continue
-        
-        # CASE1: if oldnode doesn't have delimiter or invalid syntax
-        elif num_of_delimiter == 0 or (num_of_delimiter % 2 == 1):
-            result.append(old_node)
-        # CASE2: if oldnode have right syntax
-        elif old_node.text.count(delimiter) % 2 == 0:
-            for part in after_split_list:
-                if part in find_match_text(old_node.text, delimiter):
-                    result.append(TextNode(part, text_type))
-                else:
-                    result.append(TextNode(part, text_type_text))
+        if find_match_text(old_node.text, delimiter):
+            after_split_list = old_node.text.split(delimiter)
+            num_of_delimiter = old_node.text.count(delimiter)
+            if old_node.text == "":
+                continue
+            
+            # CASE1: if oldnode doesn't have delimiter or invalid syntax
+            elif num_of_delimiter == 0 or (num_of_delimiter % 2 == 1):
+                result.append(old_node)
+            # CASE2: if oldnode have right syntax
+            elif old_node.text.count(delimiter) % 2 == 0:
+                for part in after_split_list:
+                    if part in find_match_text(old_node.text, delimiter):
+                        result.append(TextNode(part, text_type))
+                    else:
+                        result.append(TextNode(part, text_type_text))
 
-    return result
+    return old_nodes
 
 # image and link to list
 def extract_markdown_images(text):
@@ -115,7 +116,7 @@ def text_to_textnodes(text):
     return e
     
 
-final = text_to_textnodes("This is **text** with\n an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)")
+#final = text_to_textnodes("1. An elaborate pantheon of deities (the `Valar` and `Maiar`)\n2. The tragic saga of the Noldor Elves\n3. The rise and fall of great kingdoms such as Gondolin and Númenor")
 
 #print(final)
 #node = TextNode(

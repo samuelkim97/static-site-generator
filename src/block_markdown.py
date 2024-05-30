@@ -1,6 +1,7 @@
 import re
 from htmlnode import HTMLNode, ParentNode
 from inline_markdown import text_to_textnodes
+from textnode import text_node_to_html_node
 
 block_type_paragraph = "paragraph"
 block_type_heading= "heading"
@@ -61,7 +62,14 @@ def block_to_html_node(single_block):
     if block_type == block_type_paragraph:
         return paragraph_to_html_node(single_block)
 
-
+# text to list of html node
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    children = []
+    for text_node in text_nodes:
+        html_node = text_node_to_html_node(text_node)
+        children.append(html_node)
+    return children
 
 # HEADING
 def heading_to_html_node(block):
@@ -69,7 +77,7 @@ def heading_to_html_node(block):
     for line in block.split("\n"):
         tag = f"h{line.count("#")}"
         value = line.lstrip("#")
-        list_of_child = text_to_textnodes(value)
+        list_of_child = text_to_children(value)
         return_list.append(ParentNode(tag, list_of_child))
     return return_list
 
@@ -77,14 +85,14 @@ def heading_to_html_node(block):
 def code_to_html_node(block):
     replaced_block = block.replace("`", "")
     replaced_string = " ".join(replaced_block.split("\n"))
-    child = text_to_textnodes(replaced_string)
+    child = text_to_children(replaced_string)
     return [ParentNode("pre", [ParentNode("code", child)])]
 
 # QUOTE
 def quote_to_html_node(block):
     pure_text = block.replace(">", "")
     string = " ".join(pure_text.split("\n"))
-    child = text_to_textnodes(string)
+    child = text_to_children(string)
     return [ParentNode("blockquote", child)]
 
 # UL
@@ -98,21 +106,22 @@ def ul_to_html_node(block):
     # change line to HTMLNode
     child = []
     for line in after:
-        child.append(ParentNode("li", text_to_textnodes(line)))
+        child.append(ParentNode("li", text_to_children(line)))
     return [ParentNode("ul", child)]
 # OL
 def ol_to_html_node(block):
     after = []
+    child = []
     for line in block.split("\n"):
-        after.append(line.replace(r"^\d\.\s", ""))
-    after_string= " ".join(after)
-    child = text_to_textnodes(after_string)
-    return [ParentNode("ol", [ParentNode("li", child)])]
+        after.append(re.sub(r"^\d\.\s", "", line))
+    for after_line in after:
+        child.append(ParentNode("li", text_to_children(after_line)))
+    return [ParentNode("ol", child)]
 
 # PARAGRAPH
 def paragraph_to_html_node(block):
     paragraph = " ".join(block.split("\n"))
-    child = text_to_textnodes(paragraph)
+    child = text_to_children(paragraph)
     return [ParentNode("p", child)]
 
 
@@ -131,7 +140,7 @@ def extract_title(markdown):
                 heading = ""
                 list_of_h1 = line_node.children
                 for text_node in list_of_h1:
-                    heading += text_node.text
+                    heading += text_node.value
                 heading = heading.lstrip(" ")
                 return heading
 

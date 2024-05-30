@@ -48,7 +48,11 @@ class ParentNode(HTMLNode):
             raise ValueError("There is no children")
         child_html = ""
         for leafnode in self.children:
-            child_html += leafnode.to_html()
+            if hasattr(leafnode, "__iter__"):
+                for child_leafnode in leafnode:
+                    child_html += child_leafnode.to_html()
+            else:
+                child_html += leafnode.to_html()
         return f"<{self.tag}{self.props_to_html()}>{child_html}</{self.tag}>"
 
     def __repr__(self):

@@ -28,16 +28,16 @@ def text_node_to_html_node(text_node):
     url = text_node.url
 
     if text_type == text_type_text:
-        return LeafNode(None, text).to_html()
+        return LeafNode(None, text)
     if text_type == text_type_bold:
-        return LeafNode("b", text).to_html()
+        return LeafNode("b", text)
     if text_type == text_type_italic:
-        return LeafNode("i", text).to_html()
+        return LeafNode("i", text)
     if text_type == text_type_code:
-        return LeafNode("code", text).to_html()
+        return LeafNode("code", text)
     if text_type == text_type_link:
-        return LeafNode("a", text, {"href": url}).to_html()
+        return LeafNode("a", text, {"href": url})
     if text_type == text_type_image:
-        return LeafNode("img", "", {"src": url, "alt": text}).to_html()
+        return LeafNode("img", "", {"src": url, "alt": text})
     raise Exception("Invalid text type")
 
